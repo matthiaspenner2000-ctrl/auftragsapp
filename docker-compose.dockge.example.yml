@@ -54,7 +54,7 @@ services:
       exit 0
       "
 
-  app:
+  auftragsapp-web:
     image: ghcr.io/matthiaspenner2000-ctrl/auftragsapp:latest
     restart: unless-stopped
     depends_on:

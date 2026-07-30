@@ -45,7 +45,7 @@ services:
       S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY}
       S3_BUCKET: ${S3_BUCKET:-auftragsapp}
 
-  app:
+  auftragsapp-web:
     build: .
     restart: unless-stopped
     depends_on:

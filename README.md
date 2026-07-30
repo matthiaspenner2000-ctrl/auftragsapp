@@ -78,15 +78,22 @@ weiter unten), und das Ergebnis in Dockges Compose-Editor einfügen und speicher
 ### 4. Stack starten
 
 In Dockge auf den `auftragsapp`-Stack gehen → **Deploy** (zieht das fertige Image
-von ghcr.io und startet alle Container: `postgres`, `minio`, `minio-init`, `app`).
-Die Datenbank-Migrationen (`prisma migrate deploy`) laufen automatisch beim Start
-des `app`-Containers.
+von ghcr.io und startet alle Container: `postgres`, `minio`, `minio-init`,
+`auftragsapp-web`). Die Datenbank-Migrationen (`prisma migrate deploy`) laufen
+automatisch beim Start des `auftragsapp-web`-Containers.
+
+> Der Servicename `auftragsapp-web` ist bewusst spezifisch gewählt (nicht z.B. `app`),
+> weil auf dem gemeinsamen `npm`-Docker-Netzwerk auch andere Stacks laufen können –
+> ein generischer Name wie `app` kann dort mit einem gleichnamigen Service aus einem
+> anderen Stack kollidieren, wodurch Nginx Proxy Manager Anfragen an den falschen
+> Container weiterleitet.
 
 ### 5. Ersten Admin-Account anlegen
 
-In Dockge beim `auftragsapp`-Stack das eingebaute **Terminal** für den `app`-Container
-öffnen und ausführen (Werte an die eigenen `SEED_ADMIN_*`-Wünsche anpassen, sonst wird
-`admin@mp-digitalagentur.de` / `changeme123` angelegt):
+In Dockge beim `auftragsapp`-Stack das eingebaute **Terminal** für den
+`auftragsapp-web`-Container öffnen und ausführen (Werte an die eigenen
+`SEED_ADMIN_*`-Wünsche anpassen, sonst wird `admin@mp-digitalagentur.de` /
+`changeme123` angelegt):
 
 ```bash
 npm run db:seed
@@ -98,7 +105,7 @@ In der NPM-Weboberfläche → **Proxy Hosts** → **Add Proxy Host**:
 
 - Domain Names: `auftragsapp.mp-digitalagentur.de`
 - Scheme: `http`
-- Forward Hostname/IP: `app` (Name des Docker-Compose-Service)
+- Forward Hostname/IP: `auftragsapp-web` (Name des Docker-Compose-Service)
 - Forward Port: `3000`
 - SSL-Tab: **Request a new SSL Certificate** (Let's Encrypt) aktivieren + Force SSL
 
