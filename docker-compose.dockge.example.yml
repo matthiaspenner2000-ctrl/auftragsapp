@@ -1,0 +1,87 @@
+# Diese Datei ist eine VORLAGE zum Copy-Paste in Dockges Compose-Editor.
+# Sie wird NICHT auf dem Server per FTP abgelegt und NICHT mit echten
+# Secrets in Git committed - stattdessen: Inhalt kopieren, die
+# CHANGE_ME_*-Platzhalter durch echte, starke Werte ersetzen, und das
+# Ergebnis direkt in Dockges Compose-Editor einfügen.
+#
+# Unterschied zur docker-compose.yml im Repo:
+#   - "build: ." wurde durch "image: ghcr.io/...":latest ersetzt
+#     (das von GitHub Actions gebaute, fertige Image - kein Quellcode
+#     muss mehr auf den Server hochgeladen werden)
+#   - ${VAR}-Platzhalter wurden durch feste Werte ersetzt, weil Dockge
+#     hier keine separate .env-Datei anbietet
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: auftragsapp
+      POSTGRES_PASSWORD: CHANGE_ME_STARKES_DB_PASSWORT
+      POSTGRES_DB: auftragsapp
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auftragsapp"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: auftragsapp
+      MINIO_ROOT_PASSWORD: CHANGE_ME_STARKES_S3_PASSWORT
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  minio-init:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "
+      mc alias set local http://minio:9000 auftragsapp CHANGE_ME_STARKES_S3_PASSWORT &&
+      mc mb -p local/auftragsapp &&
+      exit 0
+      "
+
+  app:
+    image: ghcr.io/matthiaspenner2000-ctrl/auftragsapp:latest
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://auftragsapp:CHANGE_ME_STARKES_DB_PASSWORT@postgres:5432/auftragsapp
+      SESSION_SECRET: CHANGE_ME_LANGER_ZUFAELLIGER_STRING_MIN_32_ZEICHEN
+      S3_ENDPOINT: http://minio:9000
+      S3_REGION: us-east-1
+      S3_ACCESS_KEY_ID: auftragsapp
+      S3_SECRET_ACCESS_KEY: CHANGE_ME_STARKES_S3_PASSWORT
+      S3_BUCKET: auftragsapp
+      S3_FORCE_PATH_STYLE: "true"
+    # Kein "ports:" nötig - Nginx Proxy Manager erreicht den Container
+    # direkt über das gemeinsame Docker-Netzwerk auf Port 3000.
+    networks:
+      - default
+      - npm_network
+
+networks:
+  npm_network:
+    external: true
+    name: npm
+
+volumes:
+  postgres_data:
+  minio_data:
