@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MITARBEITER
+}
+
+enum AuftragStatus {
+  OFFEN
+  IN_ARBEIT
+  WARTET_AUF_TEILE
+  ERLEDIGT
+}
+
+enum DateiTyp {
+  RECHNUNG
+  FOTO
+  DOKUMENT
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(MITARBEITER)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  erstellteAuftraege  Auftrag[] @relation("ErstelltVon")
+  zugewieseneAuftraege Auftrag[] @relation("ZugewiesenAn")
+  hochgeladeneDateien  AuftragDatei[]
+  kommentare           AuftragKommentar[]
+
+  @@map("users")
+}
+
+model Vehicle {
+  id             String   @id @default(cuid())
+  kennzeichen    String   @unique
+  marke          String
+  modell         String
+  baujahr        Int?
+  vin            String?
+  farbe          String?
+  kilometerstand Int?
+  kundeName      String?
+  kundeTelefon   String?
+  kundeEmail     String?
+  notizen        String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  auftraege Auftrag[]
+
+  @@map("vehicles")
+}
+
+model Auftrag {
+  id           String        @id @default(cuid())
+  titel        String
+  beschreibung String
+  status       AuftragStatus @default(OFFEN)
+  prioritaet   Int           @default(2) // 1 = hoch, 2 = normal, 3 = niedrig
+  faelligAm    DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  vehicle       Vehicle @relation(fields: [vehicleId], references: [id])
+  vehicleId     String
+
+  erstelltVon   User   @relation("ErstelltVon", fields: [erstelltVonId], references: [id])
+  erstelltVonId String
+
+  zugewiesenAn   User?   @relation("ZugewiesenAn", fields: [zugewiesenAnId], references: [id])
+  zugewiesenAnId String?
+
+  ersatzteile Ersatzteil[]
+  dateien     AuftragDatei[]
+  kommentare  AuftragKommentar[]
+
+  @@map("auftraege")
+}
+
+model Ersatzteil {
+  id          String  @id @default(cuid())
+  bezeichnung String
+  lagerplatz  String
+  menge       Int     @default(1)
+  bestellt    Boolean @default(false)
+
+  auftrag   Auftrag @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  auftragId String
+
+  @@map("ersatzteile")
+}
+
+model AuftragDatei {
+  id           String   @id @default(cuid())
+  typ          DateiTyp
+  dateiname    String
+  s3Key        String
+  mimeType     String
+  groesse      Int
+  createdAt    DateTime @default(now())
+
+  auftrag   Auftrag @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  auftragId String
+
+  hochgeladenVon   User   @relation(fields: [hochgeladenVonId], references: [id])
+  hochgeladenVonId String
+
+  @@map("auftrag_dateien")
+}
+
+model AuftragKommentar {
+  id        String   @id @default(cuid())
+  text      String
+  createdAt DateTime @default(now())
+
+  auftrag   Auftrag @relation(fields: [auftragId], references: [id], onDelete: Cascade)
+  auftragId String
+
+  autor   User   @relation(fields: [autorId], references: [id])
+  autorId String
+
+  @@map("auftrag_kommentare")
+}
