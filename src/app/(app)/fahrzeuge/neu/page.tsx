@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const FARBEN = [
@@ -32,8 +32,11 @@ export default function NeuesFahrzeugPage() {
   const [hersteller, setHersteller] = useState<string[]>([]);
   const [modelle, setModelle] = useState<string[]>([]);
 
+  const [kzOrt, setKzOrt] = useState("");
+  const [kzBuchstaben, setKzBuchstaben] = useState("");
+  const [kzNummer, setKzNummer] = useState("");
+
   const [form, setForm] = useState({
-    kennzeichen: "",
     marke: "",
     modell: "",
     hsn: "",
@@ -117,7 +120,7 @@ export default function NeuesFahrzeugPage() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        kennzeichen: form.kennzeichen,
+        kennzeichen: `${kzOrt}-${kzBuchstaben}-${kzNummer}`,
         marke: form.marke,
         modell: form.modell,
         hsn: form.hsn || null,
@@ -184,7 +187,14 @@ export default function NeuesFahrzeugPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Kennzeichen *" value={form.kennzeichen} onChange={(v) => update("kennzeichen", v)} required />
+          <KennzeichenField
+            ort={kzOrt}
+            buchstaben={kzBuchstaben}
+            nummer={kzNummer}
+            onOrtChange={setKzOrt}
+            onBuchstabenChange={setKzBuchstaben}
+            onNummerChange={setKzNummer}
+          />
           <Field
             label="Baujahr"
             value={form.baujahr}
@@ -251,6 +261,83 @@ export default function NeuesFahrzeugPage() {
           {submitting ? "Speichern…" : "Fahrzeug anlegen"}
         </button>
       </form>
+    </div>
+  );
+}
+
+function KennzeichenField({
+  ort,
+  buchstaben,
+  nummer,
+  onOrtChange,
+  onBuchstabenChange,
+  onNummerChange,
+}: {
+  ort: string;
+  buchstaben: string;
+  nummer: string;
+  onOrtChange: (v: string) => void;
+  onBuchstabenChange: (v: string) => void;
+  onNummerChange: (v: string) => void;
+}) {
+  const ortRef = useRef<HTMLInputElement>(null);
+  const buchstabenRef = useRef<HTMLInputElement>(null);
+  const nummerRef = useRef<HTMLInputElement>(null);
+
+  const segmentClass =
+    "w-full min-w-0 rounded-lg border border-slate-300 px-2 py-2 text-center text-sm uppercase outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200";
+
+  return (
+    <div>
+      <label className="mb-1 block text-sm font-medium text-slate-700">Kennzeichen *</label>
+      <div className="flex items-center gap-1">
+        <input
+          ref={ortRef}
+          required
+          value={ort}
+          maxLength={3}
+          placeholder="XX"
+          autoComplete="off"
+          onChange={(e) => {
+            const v = e.target.value.toUpperCase().replace(/[^A-ZÄÖÜ]/g, "");
+            onOrtChange(v);
+            if (v.length >= 3) buchstabenRef.current?.focus();
+          }}
+          className={segmentClass}
+        />
+        <span className="shrink-0 text-slate-400">-</span>
+        <input
+          ref={buchstabenRef}
+          required
+          value={buchstaben}
+          maxLength={2}
+          placeholder="XX"
+          autoComplete="off"
+          onChange={(e) => {
+            const v = e.target.value.toUpperCase().replace(/[^A-ZÄÖÜ]/g, "");
+            onBuchstabenChange(v);
+            if (v.length >= 2) nummerRef.current?.focus();
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Backspace" && buchstaben === "") ortRef.current?.focus();
+          }}
+          className={segmentClass}
+        />
+        <span className="shrink-0 text-slate-400">-</span>
+        <input
+          ref={nummerRef}
+          required
+          value={nummer}
+          maxLength={4}
+          placeholder="XXXX"
+          autoComplete="off"
+          onChange={(e) => onNummerChange(e.target.value.replace(/[^0-9]/g, ""))}
+          onKeyDown={(e) => {
+            if (e.key === "Backspace" && nummer === "") buchstabenRef.current?.focus();
+          }}
+          className={segmentClass}
+        />
+      </div>
     </div>
   );
 }
