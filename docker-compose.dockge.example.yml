@@ -5,12 +5,14 @@
 # Ergebnis direkt in Dockges Compose-Editor einfügen.
 #
 # Unterschied zur docker-compose.yml im Repo:
-#   - "build: ." (relativer Pfad) wurde durch einen ABSOLUTEN Pfad ersetzt
-#     ("build: /home/webserver/auftragsapp"). Dadurch ist es egal, wo
-#     Dockge die compose.yaml selbst speichert - Docker baut immer aus
-#     dem Ordner, in den der komplette Projektordner (Dockerfile, src/,
-#     package.json, ...) per FTP/SFTP hochgeladen wird. Passt zum
-#     gewohnten Schema (siehe die anderen Stacks wie "werkstatt", "kfz" usw.).
+#   - Kein "build:" mehr (das scheiterte auf diesem Server mit
+#     "path not found", vermutlich weil der Build in einer isolierten
+#     Umgebung ohne Host-Zugriff läuft). Stattdessen: fertiges
+#     node:22-alpine-Image + Volume-Mount auf den per FTP hochgeladenen
+#     Ordner - genau das gleiche Schema wie die PHP-Stacks (webdevops/
+#     php-apache + Volume). Beim Containerstart installiert/baut sich
+#     die App selbst (npm ci && npm run build), das dauert beim
+#     allerersten Start ein paar Minuten.
 #   - ${VAR}-Platzhalter wurden durch feste Werte ersetzt, weil Dockge
 #     hier keine separate .env-Datei anbietet
 
@@ -61,8 +63,12 @@ services:
       "
 
   auftragsapp-web:
-    build: /home/webserver/auftragsapp # <----- Pfad ggf. anpassen!
+    image: node:22-alpine
     container_name: auftragsapp
+    working_dir: /app
+    volumes:
+      - /home/webserver/auftragsapp:/app # <----- Pfad ggf. anpassen!
+    command: sh -c "npm ci && npx prisma generate && npm run build && npx prisma migrate deploy && npm start"
     restart: unless-stopped
     depends_on:
       postgres:

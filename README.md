@@ -44,10 +44,12 @@ App läuft dann unter http://localhost:3000, Login mit den `SEED_ADMIN_*`-Zugang
 
 Dieses Setup geht davon aus: Dockge läuft bereits auf dem Server, und Nginx Proxy Manager
 (NPM) läuft bereits als eigener Stack und terminiert HTTPS für andere Domains. Es folgt
-demselben Schema wie deine anderen Projekte (z.B. „werkstatt", „kfz"): Die App-Dateien
-liegen per FTP/SFTP in einem Ordner auf dem Server, und in Dockge wird nur der
-Compose-Text eingefügt, der per **absolutem Pfad** auf diesen Ordner verweist – dadurch
-spielt es keine Rolle, wo Dockge die `compose.yaml` selbst intern speichert.
+demselben Schema wie deine PHP-Projekte (z.B. „werkstatt", „kfz"): Die App-Dateien liegen
+per FTP/SFTP in einem Ordner auf dem Server, der per **Volume** in den Container gemountet
+wird (kein `build:`-Schritt auf dem Server – das scheiterte hier mit „path not found",
+vermutlich weil der Docker-Build in einer isolierten Umgebung ohne Host-Zugriff läuft,
+während Volumes nachweislich funktionieren). Der Container installiert und baut die App
+beim ersten Start selbst.
 
 ### 1. Projektdateien per FTP/SFTP hochladen
 
@@ -56,9 +58,8 @@ Server hochladen (inkl. `Dockerfile`, `package.json`, `prisma/`, `src/` usw.).
 Nicht mit hochladen: `node_modules/`, `.next/`, `.git/`, `.env` (lokale Datei) – wird
 beim Build ohnehin neu erzeugt bzw. ist nicht für den Server gedacht.
 
-> Falls der Pfad auf deinem Server anders lautet als `/home/webserver/auftragsapp`
-> (z.B. ein anderer Ordnername oder eine andere Basis), muss der `build:`-Pfad in
-> Schritt 2 entsprechend angepasst werden.
+> Falls der Pfad auf deinem Server anders lautet als `/home/webserver/auftragsapp`,
+> muss der Volume-Pfad in Schritt 3 entsprechend angepasst werden.
 
 ### 2. Neuen Stack in Dockge anlegen
 
@@ -71,18 +72,20 @@ kopieren, alle `CHANGE_ME_*`-Platzhalter durch echte, starke Werte ersetzen (Vor
 weiter unten), und das Ergebnis in Dockges Compose-Editor einfügen und speichern.
 
 > Diese Datei ist absichtlich **nicht** die im Repo verwendete `docker-compose.yml` –
-> sie referenziert `build: /home/webserver/auftragsapp` (absoluter Pfad) statt
-> `build: .` und enthält direkt die Secrets, weil Dockge hier keine separate
-> `.env`-Datei anbietet. Diese ausgefüllte Version bleibt nur in Dockge gespeichert,
-> sie wird nie nach GitHub gepusht.
+> sie nutzt ein fertiges `node:22-alpine`-Image mit Volume-Mount statt `build: .`
+> (kein eigener Docker-Build auf dem Server nötig) und enthält direkt die Secrets,
+> weil Dockge hier keine separate `.env`-Datei anbietet. Diese ausgefüllte Version
+> bleibt nur in Dockge gespeichert, sie wird nie nach GitHub gepusht.
 
 ### 4. Stack starten
 
-In Dockge auf den `auftragsapp`-Stack gehen → **Deploy** (baut das Image aus dem
-hochgeladenen Ordner und startet alle Container: `postgres`, `minio`, `minio-init`,
-`auftragsapp-web`). Die Datenbank-Migrationen (`prisma migrate deploy`) laufen
-automatisch beim Start des `auftragsapp-web`-Containers. Der erste Build kann ein
-paar Minuten dauern (npm install + Next.js-Build).
+In Dockge auf den `auftragsapp`-Stack gehen → **Deploy** (startet alle Container:
+`postgres`, `minio`, `minio-init`, `auftragsapp-web`). Der `auftragsapp-web`-Container
+installiert beim ersten Start automatisch die Abhängigkeiten, baut die App und wendet
+die Datenbank-Migrationen an (`npm ci && npx prisma generate && npm run build &&
+npx prisma migrate deploy && npm start`) – das kann beim allerersten Start ein paar
+Minuten dauern. Fortschritt in den Logs des `auftragsapp-web`-Containers in Dockge
+sichtbar.
 
 > Der Servicename `auftragsapp-web` ist bewusst spezifisch gewählt (nicht z.B. `app`),
 > weil auf dem gemeinsamen `npm`-Docker-Netzwerk auch andere Stacks laufen können –
@@ -123,8 +126,8 @@ E-Mail) anmelden (Standard, falls keine `SEED_ADMIN_*`-Werte gesetzt wurden: Nam
 
 1. Geänderte Dateien per FTP/SFTP in `/home/webserver/auftragsapp` hochladen (bestehende
    Dateien überschreiben).
-2. In Dockge beim `auftragsapp`-Stack auf **Deploy** klicken – baut das Image aus dem
-   aktualisierten Ordner neu und startet die Container neu.
+2. In Dockge beim `auftragsapp`-Stack den `auftragsapp-web`-Container **neu starten**
+   (Restart) – installiert/baut die App beim Start neu aus dem aktualisierten Ordner.
 
 ### Backups
 
@@ -142,4 +145,4 @@ E-Mail) anmelden (Standard, falls keine `SEED_ADMIN_*`-Werte gesetzt wurden: Nam
 - `docker-compose.yml`, `Dockerfile` – für lokales Docker-basiertes Testen (baut das
   Image selbst, `${VAR}`-Platzhalter aus `.env`)
 - `docker-compose.dockge.example.yml` – Vorlage für den Dockge-Compose-Editor auf dem
-  Server (baut aus dem per FTP hochgeladenen Ordner via absolutem Pfad)
+  Server (Volume-Mount auf den per FTP hochgeladenen Ordner, kein `build:`-Schritt)
