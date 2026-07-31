@@ -45,6 +45,10 @@ yarn-error.log*
 # lokale Claude-Code-Einstellungen
 .claude/
 
+# Rohdaten-Quelle für die KBA-Migration (Daten stecken bereits in
+# prisma/migrations/..._hsn_tsn/migration.sql, Rohdatei muss nicht ins Repo)
+/fz6_2026.xlsx
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

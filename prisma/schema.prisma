@@ -46,6 +46,8 @@ model Vehicle {
   kennzeichen    String   @unique
   marke          String
   modell         String
+  hsn            String?
+  tsn            String?
   baujahr        Int?
   vin            String?
   farbe          String?
@@ -60,6 +62,19 @@ model Vehicle {
   auftraege Auftrag[]
 
   @@map("vehicles")
+}
+
+// Offizielle KBA-Schlüsselnummern (Herstellerschlüsselnummer/Typschlüsselnummer)
+// zum Nachschlagen von Hersteller und Handelsname bei der Fahrzeuganlage.
+// Quelle: Kraftfahrt-Bundesamt, Statistik FZ 6.1
+model KbaTyp {
+  hsn         String
+  tsn         String
+  hersteller  String
+  handelsname String
+
+  @@id([hsn, tsn])
+  @@map("kba_typen")
 }
 
 model Auftrag {

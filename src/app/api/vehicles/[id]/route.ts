@@ -37,6 +37,8 @@ const updateVehicleSchema = z.object({
   kennzeichen: z.string().min(1).optional(),
   marke: z.string().min(1).optional(),
   modell: z.string().min(1).optional(),
+  hsn: z.string().optional().nullable(),
+  tsn: z.string().optional().nullable(),
   baujahr: z.number().int().optional().nullable(),
   vin: z.string().optional().nullable(),
   farbe: z.string().optional().nullable(),

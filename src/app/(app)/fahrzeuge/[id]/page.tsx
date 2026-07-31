@@ -56,6 +56,8 @@ export default function FahrzeugKarteiPage() {
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
           <h2 className="mb-3 text-sm font-semibold text-slate-500">Fahrzeugdaten</h2>
           <dl className="grid grid-cols-2 gap-y-2 text-sm">
+            <dt className="text-slate-500">HSN / TSN</dt>
+            <dd>{vehicle.hsn && vehicle.tsn ? `${vehicle.hsn} / ${vehicle.tsn}` : "–"}</dd>
             <dt className="text-slate-500">Farbe</dt>
             <dd>{vehicle.farbe ?? "–"}</dd>
             <dt className="text-slate-500">Kilometerstand</dt>

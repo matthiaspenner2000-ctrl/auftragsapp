@@ -36,6 +36,8 @@ export type Vehicle = {
   kennzeichen: string;
   marke: string;
   modell: string;
+  hsn: string | null;
+  tsn: string | null;
   baujahr: number | null;
   vin: string | null;
   farbe: string | null;

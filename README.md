@@ -3,7 +3,10 @@
 Werkstatt-Auftragsverwaltung: Der Admin legt Mitarbeiter-Konten an und weist Aufträge
 (Fahrzeug, Aufgabe, Ersatzteile inkl. Lagerplatz) zu. Zu jedem Auftrag können Rechnungen,
 Fotos und Dokumente hochgeladen werden. Jedes Fahrzeug hat eine eigene Kartei mit voller
-Auftragshistorie.
+Auftragshistorie. Bei der Fahrzeuganlage werden Marke & Modell anhand von HSN/TSN
+(Herstellerschlüssel-/Typschlüsselnummer aus dem Fahrzeugschein) automatisch erkannt –
+Datenbasis ist die offizielle KBA-Statistik FZ 6.1 (63.260 Einträge, lokal in der
+Datenbank, keine externe API nötig).
 
 **Stack:** Next.js (TypeScript) · PostgreSQL · Prisma · MinIO (S3-kompatibler Objektspeicher) ·
 Docker Compose (verwaltet über Dockge) · Nginx Proxy Manager (Reverse Proxy/HTTPS)
