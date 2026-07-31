@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireSession } from "@/lib/auth-guards";
+import { normalizeHersteller } from "@/lib/kba";
 
 export async function GET(request: NextRequest) {
   const { response } = await requireSession();
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
   }
 
   return NextResponse.json({
-    hersteller: eintrag.hersteller,
+    hersteller: normalizeHersteller(eintrag.hersteller),
     handelsname: eintrag.handelsname,
   });
 }

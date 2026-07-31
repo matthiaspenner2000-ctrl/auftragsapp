@@ -3,6 +3,25 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+const FARBEN = [
+  "Schwarz",
+  "Weiß",
+  "Silber",
+  "Grau",
+  "Blau",
+  "Rot",
+  "Grün",
+  "Braun",
+  "Beige",
+  "Gelb",
+  "Orange",
+  "Gold",
+  "Violett",
+];
+
+const AKTUELLES_JAHR = new Date().getFullYear();
+const BAUJAHRE = Array.from({ length: AKTUELLES_JAHR - 1979 + 1 }, (_, i) => String(AKTUELLES_JAHR - i));
+
 export default function NeuesFahrzeugPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
@@ -10,6 +29,8 @@ export default function NeuesFahrzeugPage() {
   const [kbaStatus, setKbaStatus] = useState<
     { state: "idle" } | { state: "loading" } | { state: "found" } | { state: "not-found" }
   >({ state: "idle" });
+  const [hersteller, setHersteller] = useState<string[]>([]);
+  const [modelle, setModelle] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     kennzeichen: "",
@@ -33,6 +54,30 @@ export default function NeuesFahrzeugPage() {
 
   const hsn = form.hsn.trim();
   const tsn = form.tsn.trim();
+  const marke = form.marke.trim();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- initialer Datenabruf beim Mount
+    fetch("/api/kba/hersteller")
+      .then((r) => r.json())
+      .then(setHersteller);
+  }, []);
+
+  useEffect(() => {
+    if (!marke) {
+      setModelle([]);
+      return;
+    }
+    let cancelled = false;
+    fetch(`/api/kba/modelle?hersteller=${encodeURIComponent(marke)}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (!cancelled) setModelle(data);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [marke]);
 
   useEffect(() => {
     if (hsn.length !== 4 || tsn.length !== 3) {
@@ -140,14 +185,40 @@ export default function NeuesFahrzeugPage() {
 
         <div className="grid grid-cols-2 gap-4">
           <Field label="Kennzeichen *" value={form.kennzeichen} onChange={(v) => update("kennzeichen", v)} required />
-          <Field label="Baujahr" value={form.baujahr} onChange={(v) => update("baujahr", v)} type="number" />
+          <Field
+            label="Baujahr"
+            value={form.baujahr}
+            onChange={(v) => update("baujahr", v)}
+            list="baujahr-liste"
+            options={BAUJAHRE}
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Marke *" value={form.marke} onChange={(v) => update("marke", v)} required />
-          <Field label="Modell *" value={form.modell} onChange={(v) => update("modell", v)} required />
+          <Field
+            label="Marke *"
+            value={form.marke}
+            onChange={(v) => update("marke", v)}
+            required
+            list="marke-liste"
+            options={hersteller}
+          />
+          <Field
+            label="Modell *"
+            value={form.modell}
+            onChange={(v) => update("modell", v)}
+            required
+            list="modell-liste"
+            options={modelle}
+          />
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <Field label="Farbe" value={form.farbe} onChange={(v) => update("farbe", v)} />
+          <Field
+            label="Farbe"
+            value={form.farbe}
+            onChange={(v) => update("farbe", v)}
+            list="farbe-liste"
+            options={FARBEN}
+          />
           <Field label="Kilometerstand" value={form.kilometerstand} onChange={(v) => update("kilometerstand", v)} type="number" />
         </div>
         <Field label="Fahrgestellnummer (VIN)" value={form.vin} onChange={(v) => update("vin", v)} />
@@ -192,6 +263,8 @@ function Field({
   required = false,
   maxLength,
   placeholder,
+  list,
+  options,
 }: {
   label: string;
   value: string;
@@ -200,6 +273,8 @@ function Field({
   required?: boolean;
   maxLength?: number;
   placeholder?: string;
+  list?: string;
+  options?: string[];
 }) {
   return (
     <div>
@@ -211,8 +286,17 @@ function Field({
         onChange={(e) => onChange(e.target.value)}
         maxLength={maxLength}
         placeholder={placeholder}
+        list={list}
+        autoComplete="off"
         className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
       />
+      {list && options && (
+        <datalist id={list}>
+          {options.map((o) => (
+            <option key={o} value={o} />
+          ))}
+        </datalist>
+      )}
     </div>
   );
 }
