@@ -13,7 +13,6 @@ export async function GET() {
     select: {
       id: true,
       name: true,
-      email: true,
       role: true,
       active: true,
       createdAt: true,
@@ -26,7 +25,6 @@ export async function GET() {
 
 const createUserSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
   password: z.string().min(8),
   role: z.enum(["ADMIN", "MITARBEITER"]),
 });
@@ -41,17 +39,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Ungültige Eingabe" }, { status: 400 });
   }
 
-  const { name, email, password, role } = parsed.data;
+  const { name, password, role } = parsed.data;
 
-  const existing = await prisma.user.findUnique({ where: { email } });
+  const existing = await prisma.user.findUnique({ where: { name } });
   if (existing) {
-    return NextResponse.json({ error: "E-Mail wird bereits verwendet" }, { status: 409 });
+    return NextResponse.json({ error: "Name wird bereits verwendet" }, { status: 409 });
   }
 
   const passwordHash = await hashPassword(password);
   const user = await prisma.user.create({
-    data: { name, email, passwordHash, role },
-    select: { id: true, name: true, email: true, role: true, active: true, createdAt: true },
+    data: { name, passwordHash, role },
+    select: { id: true, name: true, role: true, active: true, createdAt: true },
   });
 
   return NextResponse.json(user, { status: 201 });

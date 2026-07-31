@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ function LoginForm() {
     const res = await fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ name, password }),
     });
 
     setLoading(false);
@@ -44,14 +44,14 @@ function LoginForm() {
         <h1 className="mb-1 text-2xl font-bold text-indigo-700">🔧 AuftragsApp</h1>
         <p className="mb-6 text-sm text-slate-500">Melde dich mit deinem Konto an</p>
 
-        <label className="mb-1 block text-sm font-medium text-slate-700">E-Mail</label>
+        <label className="mb-1 block text-sm font-medium text-slate-700">Name</label>
         <input
-          type="email"
+          type="text"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           className="mb-4 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-          placeholder="name@werkstatt.de"
+          placeholder="Max Mustermann"
         />
 
         <label className="mb-1 block text-sm font-medium text-slate-700">Passwort</label>

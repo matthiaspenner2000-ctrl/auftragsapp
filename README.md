@@ -92,8 +92,8 @@ automatisch beim Start des `auftragsapp-web`-Containers.
 
 In Dockge beim `auftragsapp`-Stack das eingebaute **Terminal** für den
 `auftragsapp-web`-Container öffnen und ausführen (Werte an die eigenen
-`SEED_ADMIN_*`-Wünsche anpassen, sonst wird `admin@mp-digitalagentur.de` /
-`changeme123` angelegt):
+`SEED_ADMIN_*`-Wünsche anpassen, sonst wird der Name `Admin` /
+Passwort `changeme123` angelegt):
 
 ```bash
 npm run db:seed
@@ -112,10 +112,10 @@ In der NPM-Weboberfläche → **Proxy Hosts** → **Add Proxy Host**:
 Voraussetzung: Der DNS-A-Record von `auftragsapp.mp-digitalagentur.de` zeigt bereits
 auf die Server-IP.
 
-Danach unter `https://auftragsapp.mp-digitalagentur.de/login` anmelden (Standard, falls
-keine `SEED_ADMIN_*`-Werte gesetzt wurden: `admin@mp-digitalagentur.de` / `changeme123` –
-Passwort danach unbedingt ändern). Über **Mitarbeiter** (nur als Admin sichtbar) können
-weitere Konten angelegt werden.
+Danach unter `https://auftragsapp.mp-digitalagentur.de/login` mit **Name** (nicht
+E-Mail) anmelden (Standard, falls keine `SEED_ADMIN_*`-Werte gesetzt wurden: Name
+`Admin` / Passwort `changeme123` – Passwort danach unbedingt ändern). Über
+**Mitarbeiter** (nur als Admin sichtbar) können weitere Konten angelegt werden.
 
 ### Updates einspielen
 

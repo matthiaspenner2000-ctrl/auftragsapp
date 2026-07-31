@@ -5,7 +5,7 @@ import { verifyPassword } from "@/lib/password";
 import { createSession } from "@/lib/session";
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  name: z.string().min(1),
   password: z.string().min(1),
 });
 
@@ -13,11 +13,11 @@ export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   const parsed = loginSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "E-Mail und Passwort erforderlich" }, { status: 400 });
+    return NextResponse.json({ error: "Name und Passwort erforderlich" }, { status: 400 });
   }
 
-  const { email, password } = parsed.data;
-  const user = await prisma.user.findUnique({ where: { email } });
+  const { name, password } = parsed.data;
+  const user = await prisma.user.findUnique({ where: { name } });
 
   if (!user || !user.active) {
     return NextResponse.json({ error: "Ungültige Anmeldedaten" }, { status: 401 });

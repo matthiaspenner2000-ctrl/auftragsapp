@@ -8,7 +8,7 @@ async function loadAuftrag(id: string) {
     where: { id },
     include: {
       vehicle: true,
-      zugewiesenAn: { select: { id: true, name: true, email: true } },
+      zugewiesenAn: { select: { id: true, name: true } },
       erstelltVon: { select: { id: true, name: true } },
       ersatzteile: true,
       dateien: {

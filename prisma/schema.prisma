@@ -27,8 +27,7 @@ enum DateiTyp {
 
 model User {
   id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
+  name         String   @unique
   passwordHash String
   role         Role     @default(MITARBEITER)
   active       Boolean  @default(true)

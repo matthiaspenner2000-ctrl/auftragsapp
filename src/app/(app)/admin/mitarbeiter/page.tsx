@@ -10,7 +10,6 @@ export default function MitarbeiterPage() {
   const [error, setError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<Role>("MITARBEITER");
   const [submitting, setSubmitting] = useState(false);
@@ -35,7 +34,7 @@ export default function MitarbeiterPage() {
     const res = await fetch("/api/users", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password, role }),
+      body: JSON.stringify({ name, password, role }),
     });
 
     setSubmitting(false);
@@ -47,7 +46,6 @@ export default function MitarbeiterPage() {
     }
 
     setName("");
-    setEmail("");
     setPassword("");
     setRole("MITARBEITER");
     setShowForm(false);
@@ -86,16 +84,6 @@ export default function MitarbeiterPage() {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-slate-700">E-Mail</label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
             />
           </div>
@@ -142,7 +130,6 @@ export default function MitarbeiterPage() {
             <thead className="border-b border-slate-200 bg-slate-50 text-slate-600">
               <tr>
                 <th className="px-4 py-3 font-medium">Name</th>
-                <th className="px-4 py-3 font-medium">E-Mail</th>
                 <th className="px-4 py-3 font-medium">Rolle</th>
                 <th className="px-4 py-3 font-medium">Zugewiesene Aufträge</th>
                 <th className="px-4 py-3 font-medium">Status</th>
@@ -153,7 +140,6 @@ export default function MitarbeiterPage() {
               {users.map((u) => (
                 <tr key={u.id} className="border-b border-slate-100 last:border-0">
                   <td className="px-4 py-3">{u.name}</td>
-                  <td className="px-4 py-3 text-slate-500">{u.email}</td>
                   <td className="px-4 py-3">{u.role === "ADMIN" ? "Admin" : "Mitarbeiter"}</td>
                   <td className="px-4 py-3">{u._count?.zugewieseneAuftraege ?? 0}</td>
                   <td className="px-4 py-3">
