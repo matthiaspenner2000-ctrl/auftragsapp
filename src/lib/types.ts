@@ -66,14 +66,14 @@ export type AuftragDatei = {
   mimeType: string;
   groesse: number;
   createdAt: string;
-  hochgeladenVon: { id: string; name: string };
+  hochgeladenVon: { id: string; name: string } | null;
 };
 
 export type AuftragKommentar = {
   id: string;
   text: string;
   createdAt: string;
-  autor: { id: string; name: string };
+  autor: { id: string; name: string } | null;
 };
 
 export type AuftragSummary = {
@@ -86,7 +86,7 @@ export type AuftragSummary = {
   createdAt: string;
   vehicle: Vehicle;
   zugewiesenAn: { id: string; name: string } | null;
-  erstelltVon: { id: string; name: string };
+  erstelltVon: { id: string; name: string } | null;
   _count?: { dateien: number; ersatzteile: number };
 };
 

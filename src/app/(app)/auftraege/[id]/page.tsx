@@ -149,7 +149,7 @@ export default function AuftragDetailPage() {
             {auftrag.faelligAm && (
               <span>Fällig: {new Date(auftrag.faelligAm).toLocaleDateString("de-DE")}</span>
             )}
-            <span>Erstellt von: {auftrag.erstelltVon.name}</span>
+            <span>Erstellt von: {auftrag.erstelltVon?.name ?? "Gelöschter Mitarbeiter"}</span>
           </div>
 
           <div className="mt-5 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
@@ -251,7 +251,7 @@ export default function AuftragDetailPage() {
             {auftrag.kommentare.map((k) => (
               <div key={k.id} className="rounded-lg bg-slate-50 p-3 text-sm">
                 <p className="mb-1 text-xs text-slate-500">
-                  {k.autor.name} · {new Date(k.createdAt).toLocaleString("de-DE")}
+                  {k.autor?.name ?? "Gelöschter Mitarbeiter"} · {new Date(k.createdAt).toLocaleString("de-DE")}
                 </p>
                 <p className="whitespace-pre-wrap text-slate-800">{k.text}</p>
               </div>
@@ -311,7 +311,7 @@ export default function AuftragDetailPage() {
                 <div className="min-w-0">
                   <p className="truncate font-medium text-slate-900">{d.dateiname}</p>
                   <p className="text-xs text-slate-500">
-                    {DATEI_TYP_LABELS[d.typ]} · {formatBytes(d.groesse)} · {d.hochgeladenVon.name}
+                    {DATEI_TYP_LABELS[d.typ]} · {formatBytes(d.groesse)} · {d.hochgeladenVon?.name ?? "Gelöschter Mitarbeiter"}
                   </p>
                 </div>
                 <div className="flex shrink-0 gap-2">

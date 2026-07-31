@@ -90,10 +90,10 @@ model Auftrag {
   vehicle       Vehicle @relation(fields: [vehicleId], references: [id])
   vehicleId     String
 
-  erstelltVon   User   @relation("ErstelltVon", fields: [erstelltVonId], references: [id])
-  erstelltVonId String
+  erstelltVon   User?   @relation("ErstelltVon", fields: [erstelltVonId], references: [id], onDelete: SetNull)
+  erstelltVonId String?
 
-  zugewiesenAn   User?   @relation("ZugewiesenAn", fields: [zugewiesenAnId], references: [id])
+  zugewiesenAn   User?   @relation("ZugewiesenAn", fields: [zugewiesenAnId], references: [id], onDelete: SetNull)
   zugewiesenAnId String?
 
   ersatzteile Ersatzteil[]
@@ -128,8 +128,8 @@ model AuftragDatei {
   auftrag   Auftrag @relation(fields: [auftragId], references: [id], onDelete: Cascade)
   auftragId String
 
-  hochgeladenVon   User   @relation(fields: [hochgeladenVonId], references: [id])
-  hochgeladenVonId String
+  hochgeladenVon   User?   @relation(fields: [hochgeladenVonId], references: [id], onDelete: SetNull)
+  hochgeladenVonId String?
 
   @@map("auftrag_dateien")
 }
@@ -142,8 +142,8 @@ model AuftragKommentar {
   auftrag   Auftrag @relation(fields: [auftragId], references: [id], onDelete: Cascade)
   auftragId String
 
-  autor   User   @relation(fields: [autorId], references: [id])
-  autorId String
+  autor   User?   @relation(fields: [autorId], references: [id], onDelete: SetNull)
+  autorId String?
 
   @@map("auftrag_kommentare")
 }

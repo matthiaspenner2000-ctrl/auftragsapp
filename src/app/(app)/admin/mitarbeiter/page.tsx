@@ -61,6 +61,24 @@ export default function MitarbeiterPage() {
     loadUsers();
   }
 
+  async function deleteUser(user: UserSummary) {
+    if (
+      !confirm(
+        `${user.name} wirklich endgültig löschen? Aufträge/Dateien/Kommentare von ${user.name} bleiben erhalten, zeigen aber keinen Ersteller mehr an.`
+      )
+    ) {
+      return;
+    }
+
+    const res = await fetch(`/api/users/${user.id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error ?? "Fehler beim Löschen");
+      return;
+    }
+    loadUsers();
+  }
+
   return (
     <div>
       <div className="mb-6 flex items-center justify-between">
@@ -152,12 +170,20 @@ export default function MitarbeiterPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button
-                      onClick={() => toggleActive(u)}
-                      className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
-                    >
-                      {u.active ? "Deaktivieren" : "Aktivieren"}
-                    </button>
+                    <div className="flex justify-end gap-3">
+                      <button
+                        onClick={() => toggleActive(u)}
+                        className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+                      >
+                        {u.active ? "Deaktivieren" : "Aktivieren"}
+                      </button>
+                      <button
+                        onClick={() => deleteUser(u)}
+                        className="text-sm font-medium text-red-600 hover:text-red-800"
+                      >
+                        Löschen
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
