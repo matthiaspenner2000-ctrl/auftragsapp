@@ -5,15 +5,19 @@
 # Ergebnis direkt in Dockges Compose-Editor einfügen.
 #
 # Unterschied zur docker-compose.yml im Repo:
-#   - "build: ." wurde durch "image: ghcr.io/...":latest ersetzt
-#     (das von GitHub Actions gebaute, fertige Image - kein Quellcode
-#     muss mehr auf den Server hochgeladen werden)
+#   - "build: ." (relativer Pfad) wurde durch einen ABSOLUTEN Pfad ersetzt
+#     ("build: /home/webserver/auftragsapp"). Dadurch ist es egal, wo
+#     Dockge die compose.yaml selbst speichert - Docker baut immer aus
+#     dem Ordner, in den der komplette Projektordner (Dockerfile, src/,
+#     package.json, ...) per FTP/SFTP hochgeladen wird. Passt zum
+#     gewohnten Schema (siehe die anderen Stacks wie "werkstatt", "kfz" usw.).
 #   - ${VAR}-Platzhalter wurden durch feste Werte ersetzt, weil Dockge
 #     hier keine separate .env-Datei anbietet
 
 services:
   postgres:
     image: postgres:16-alpine
+    container_name: postgres_database_auftragsapp
     restart: unless-stopped
     environment:
       POSTGRES_USER: auftragsapp
@@ -29,6 +33,7 @@ services:
 
   minio:
     image: minio/minio:latest
+    container_name: minio_auftragsapp
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
@@ -44,6 +49,7 @@ services:
 
   minio-init:
     image: minio/mc:latest
+    container_name: minio_init_auftragsapp
     depends_on:
       minio:
         condition: service_healthy
@@ -55,7 +61,8 @@ services:
       "
 
   auftragsapp-web:
-    image: ghcr.io/matthiaspenner2000-ctrl/auftragsapp:latest
+    build: /home/webserver/auftragsapp # <----- Pfad ggf. anpassen!
+    container_name: auftragsapp
     restart: unless-stopped
     depends_on:
       postgres:
@@ -75,12 +82,11 @@ services:
     # direkt über das gemeinsame Docker-Netzwerk auf Port 3000.
     networks:
       - default
-      - npm_network
+      - npm
 
 networks:
-  npm_network:
+  npm:
     external: true
-    name: npm
 
 volumes:
   postgres_data:

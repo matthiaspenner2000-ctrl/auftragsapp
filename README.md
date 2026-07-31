@@ -43,22 +43,22 @@ App läuft dann unter http://localhost:3000, Login mit den `SEED_ADMIN_*`-Zugang
 ## Deployment auf dem VPS mit Dockge + Nginx Proxy Manager
 
 Dieses Setup geht davon aus: Dockge läuft bereits auf dem Server, und Nginx Proxy Manager
-(NPM) läuft bereits als eigener Stack und terminiert HTTPS für andere Domains. Weder
-SSH noch FTP-Zugriff auf den Dockge-Stack-Ordner werden benötigt – das fertige
-Docker-Image wird automatisch per GitHub Actions gebaut und nach GitHub Container
-Registry (ghcr.io) veröffentlicht. In Dockge muss nur noch fertiger Compose-Text
-eingefügt werden.
+(NPM) läuft bereits als eigener Stack und terminiert HTTPS für andere Domains. Es folgt
+demselben Schema wie deine anderen Projekte (z.B. „werkstatt", „kfz"): Die App-Dateien
+liegen per FTP/SFTP in einem Ordner auf dem Server, und in Dockge wird nur der
+Compose-Text eingefügt, der per **absolutem Pfad** auf diesen Ordner verweist – dadurch
+spielt es keine Rolle, wo Dockge die `compose.yaml` selbst intern speichert.
 
-### 1. GitHub Actions Build abwarten
+### 1. Projektdateien per FTP/SFTP hochladen
 
-Bei jedem Push nach `main` baut GitHub Actions automatisch das Docker-Image und
-veröffentlicht es unter `ghcr.io/matthiaspenner2000-ctrl/auftragsapp:latest`
-(Fortschritt im **Actions**-Tab des Repos:
-https://github.com/matthiaspenner2000-ctrl/auftragsapp/actions).
+Den kompletten Inhalt dieses Ordners **1:1** in `/home/webserver/auftragsapp` auf dem
+Server hochladen (inkl. `Dockerfile`, `package.json`, `prisma/`, `src/` usw.).
+Nicht mit hochladen: `node_modules/`, `.next/`, `.git/`, `.env` (lokale Datei) – wird
+beim Build ohnehin neu erzeugt bzw. ist nicht für den Server gedacht.
 
-Nach dem ersten erfolgreichen Build: Auf github.com → dein Profil → **Packages** →
-`auftragsapp` öffnen → **Package settings** → Sichtbarkeit auf **Public** stellen
-(sonst braucht der Server einen Docker-Login, um das Image zu ziehen).
+> Falls der Pfad auf deinem Server anders lautet als `/home/webserver/auftragsapp`
+> (z.B. ein anderer Ordnername oder eine andere Basis), muss der `build:`-Pfad in
+> Schritt 2 entsprechend angepasst werden.
 
 ### 2. Neuen Stack in Dockge anlegen
 
@@ -71,16 +71,18 @@ kopieren, alle `CHANGE_ME_*`-Platzhalter durch echte, starke Werte ersetzen (Vor
 weiter unten), und das Ergebnis in Dockges Compose-Editor einfügen und speichern.
 
 > Diese Datei ist absichtlich **nicht** die im Repo verwendete `docker-compose.yml` –
-> sie referenziert das fertige `image:` statt `build: .` und enthält direkt die
-> Secrets, weil Dockge hier keine separate `.env`-Datei anbietet. Diese ausgefüllte
-> Version bleibt nur in Dockge gespeichert, sie wird nie nach GitHub gepusht.
+> sie referenziert `build: /home/webserver/auftragsapp` (absoluter Pfad) statt
+> `build: .` und enthält direkt die Secrets, weil Dockge hier keine separate
+> `.env`-Datei anbietet. Diese ausgefüllte Version bleibt nur in Dockge gespeichert,
+> sie wird nie nach GitHub gepusht.
 
 ### 4. Stack starten
 
-In Dockge auf den `auftragsapp`-Stack gehen → **Deploy** (zieht das fertige Image
-von ghcr.io und startet alle Container: `postgres`, `minio`, `minio-init`,
+In Dockge auf den `auftragsapp`-Stack gehen → **Deploy** (baut das Image aus dem
+hochgeladenen Ordner und startet alle Container: `postgres`, `minio`, `minio-init`,
 `auftragsapp-web`). Die Datenbank-Migrationen (`prisma migrate deploy`) laufen
-automatisch beim Start des `auftragsapp-web`-Containers.
+automatisch beim Start des `auftragsapp-web`-Containers. Der erste Build kann ein
+paar Minuten dauern (npm install + Next.js-Build).
 
 > Der Servicename `auftragsapp-web` ist bewusst spezifisch gewählt (nicht z.B. `app`),
 > weil auf dem gemeinsamen `npm`-Docker-Netzwerk auch andere Stacks laufen können –
@@ -119,10 +121,10 @@ E-Mail) anmelden (Standard, falls keine `SEED_ADMIN_*`-Werte gesetzt wurden: Nam
 
 ### Updates einspielen
 
-1. Code-Änderungen nach GitHub pushen (`git push`) → GitHub Actions baut automatisch
-   ein neues Image und veröffentlicht es unter `:latest`.
-2. In Dockge beim `auftragsapp`-Stack auf **Pull** (neues Image holen) und danach
-   **Deploy**/**Restart** klicken, damit die Container das neue Image verwenden.
+1. Geänderte Dateien per FTP/SFTP in `/home/webserver/auftragsapp` hochladen (bestehende
+   Dateien überschreiben).
+2. In Dockge beim `auftragsapp`-Stack auf **Deploy** klicken – baut das Image aus dem
+   aktualisierten Ordner neu und startet die Container neu.
 
 ### Backups
 
@@ -140,6 +142,4 @@ E-Mail) anmelden (Standard, falls keine `SEED_ADMIN_*`-Werte gesetzt wurden: Nam
 - `docker-compose.yml`, `Dockerfile` – für lokales Docker-basiertes Testen (baut das
   Image selbst, `${VAR}`-Platzhalter aus `.env`)
 - `docker-compose.dockge.example.yml` – Vorlage für den Dockge-Compose-Editor auf dem
-  Server (nutzt das fertige GHCR-Image statt eigenem Build)
-- `.github/workflows/docker-publish.yml` – baut bei jedem Push nach `main` automatisch
-  das Docker-Image und veröffentlicht es nach ghcr.io
+  Server (baut aus dem per FTP hochgeladenen Ordner via absolutem Pfad)
