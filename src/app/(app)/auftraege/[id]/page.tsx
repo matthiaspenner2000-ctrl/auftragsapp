@@ -121,19 +121,19 @@ export default function AuftragDetailPage() {
     load();
   }
 
-  if (loading) return <p className="text-sm text-zinc-500">Lädt…</p>;
-  if (!auftrag) return <p className="text-sm text-zinc-500">Auftrag nicht gefunden.</p>;
+  if (loading) return <p className="text-sm text-slate-500">Lädt…</p>;
+  if (!auftrag) return <p className="text-sm text-slate-500">Auftrag nicht gefunden.</p>;
 
   return (
     <div className="grid gap-6 lg:grid-cols-3">
       <div className="lg:col-span-2 grid gap-6">
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="mb-3 flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-semibold text-zinc-900">{auftrag.titel}</h1>
+              <h1 className="text-2xl font-semibold text-slate-900">{auftrag.titel}</h1>
               <Link
                 href={`/fahrzeuge/${auftrag.vehicle.id}`}
-                className="text-sm text-zinc-500 hover:text-zinc-900 hover:underline"
+                className="text-sm text-slate-500 hover:text-slate-900 hover:underline"
               >
                 {auftrag.vehicle.kennzeichen} · {auftrag.vehicle.marke} {auftrag.vehicle.modell}
               </Link>
@@ -142,9 +142,9 @@ export default function AuftragDetailPage() {
               {STATUS_LABELS[auftrag.status]}
             </span>
           </div>
-          <p className="whitespace-pre-wrap text-sm text-zinc-700">{auftrag.beschreibung}</p>
+          <p className="whitespace-pre-wrap text-sm text-slate-700">{auftrag.beschreibung}</p>
 
-          <div className="mt-4 flex flex-wrap gap-4 text-sm text-zinc-500">
+          <div className="mt-4 flex flex-wrap gap-4 text-sm text-slate-500">
             <span>Priorität: {PRIORITAET_LABELS[auftrag.prioritaet]}</span>
             {auftrag.faelligAm && (
               <span>Fällig: {new Date(auftrag.faelligAm).toLocaleDateString("de-DE")}</span>
@@ -152,13 +152,13 @@ export default function AuftragDetailPage() {
             <span>Erstellt von: {auftrag.erstelltVon.name}</span>
           </div>
 
-          <div className="mt-5 grid grid-cols-2 gap-4 border-t border-zinc-100 pt-4">
+          <div className="mt-5 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
             <div>
-              <label className="mb-1 block text-sm font-medium text-zinc-700">Status</label>
+              <label className="mb-1 block text-sm font-medium text-slate-700">Status</label>
               <select
                 value={auftrag.status}
                 onChange={(e) => updateAuftrag({ status: e.target.value })}
-                className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
               >
                 {Object.entries(STATUS_LABELS).map(([value, label]) => (
                   <option key={value} value={value}>
@@ -169,11 +169,11 @@ export default function AuftragDetailPage() {
             </div>
             {isAdmin && (
               <div>
-                <label className="mb-1 block text-sm font-medium text-zinc-700">Zugewiesen an</label>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Zugewiesen an</label>
                 <select
                   value={auftrag.zugewiesenAn?.id ?? ""}
                   onChange={(e) => updateAuftrag({ zugewiesenAnId: e.target.value || null })}
-                  className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
                 >
                   <option value="">– Niemand –</option>
                   {mitarbeiter.map((m) => (
@@ -187,27 +187,27 @@ export default function AuftragDetailPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
-          <h2 className="mb-3 text-sm font-semibold text-zinc-500">
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-500">
             Ersatzteile &amp; Lagerplätze
           </h2>
           {auftrag.ersatzteile.length === 0 ? (
-            <p className="text-sm text-zinc-400">Keine Ersatzteile hinterlegt.</p>
+            <p className="text-sm text-slate-400">Keine Ersatzteile hinterlegt.</p>
           ) : (
             <div className="mb-4 grid gap-2">
               {auftrag.ersatzteile.map((t) => (
                 <div
                   key={t.id}
-                  className="flex items-center justify-between rounded-lg border border-zinc-100 px-3 py-2 text-sm"
+                  className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2 text-sm"
                 >
                   <div>
-                    <span className="font-medium text-zinc-900">{t.bezeichnung}</span>{" "}
-                    <span className="text-zinc-500">× {t.menge}</span>
-                    <span className="ml-2 rounded bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600">
+                    <span className="font-medium text-slate-900">{t.bezeichnung}</span>{" "}
+                    <span className="text-slate-500">× {t.menge}</span>
+                    <span className="ml-2 rounded bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
                       Lagerplatz: {t.lagerplatz}
                     </span>
                   </div>
-                  <label className="flex items-center gap-1.5 text-xs text-zinc-500">
+                  <label className="flex items-center gap-1.5 text-xs text-slate-500">
                     <input
                       type="checkbox"
                       checked={t.bestellt}
@@ -224,40 +224,40 @@ export default function AuftragDetailPage() {
               placeholder="Bezeichnung"
               value={neuTeil.bezeichnung}
               onChange={(e) => setNeuTeil((s) => ({ ...s, bezeichnung: e.target.value }))}
-              className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+              className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
             />
             <input
               placeholder="Lagerplatz"
               value={neuTeil.lagerplatz}
               onChange={(e) => setNeuTeil((s) => ({ ...s, lagerplatz: e.target.value }))}
-              className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+              className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
             />
             <input
               type="number"
               min={1}
               value={neuTeil.menge}
               onChange={(e) => setNeuTeil((s) => ({ ...s, menge: Number(e.target.value) }))}
-              className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+              className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
             />
-            <button className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm hover:bg-zinc-100">
+            <button className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-100">
               + Hinzufügen
             </button>
           </form>
         </div>
 
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
-          <h2 className="mb-3 text-sm font-semibold text-zinc-500">Kommentare</h2>
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-500">Kommentare</h2>
           <div className="mb-4 grid gap-3">
             {auftrag.kommentare.map((k) => (
-              <div key={k.id} className="rounded-lg bg-zinc-50 p-3 text-sm">
-                <p className="mb-1 text-xs text-zinc-500">
+              <div key={k.id} className="rounded-lg bg-slate-50 p-3 text-sm">
+                <p className="mb-1 text-xs text-slate-500">
                   {k.autor.name} · {new Date(k.createdAt).toLocaleString("de-DE")}
                 </p>
-                <p className="whitespace-pre-wrap text-zinc-800">{k.text}</p>
+                <p className="whitespace-pre-wrap text-slate-800">{k.text}</p>
               </div>
             ))}
             {auftrag.kommentare.length === 0 && (
-              <p className="text-sm text-zinc-400">Noch keine Kommentare.</p>
+              <p className="text-sm text-slate-400">Noch keine Kommentare.</p>
             )}
           </div>
           <form onSubmit={handleKommentarSubmit} className="flex gap-2">
@@ -265,9 +265,9 @@ export default function AuftragDetailPage() {
               value={kommentarText}
               onChange={(e) => setKommentarText(e.target.value)}
               placeholder="Kommentar hinzufügen…"
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
             />
-            <button className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800">
+            <button className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
               Senden
             </button>
           </form>
@@ -275,8 +275,8 @@ export default function AuftragDetailPage() {
       </div>
 
       <div className="grid gap-6">
-        <div className="rounded-xl border border-zinc-200 bg-white p-6">
-          <h2 className="mb-3 text-sm font-semibold text-zinc-500">Dateien hochladen</h2>
+        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-500">Dateien hochladen</h2>
           <div className="mb-3 flex gap-2">
             {(["RECHNUNG", "FOTO", "DOKUMENT"] as DateiTyp[]).map((typ) => (
               <button
@@ -285,8 +285,8 @@ export default function AuftragDetailPage() {
                 onClick={() => setUploadTyp(typ)}
                 className={`rounded-full px-3 py-1 text-xs ${
                   uploadTyp === typ
-                    ? "bg-zinc-900 text-white"
-                    : "border border-zinc-300 text-zinc-600 hover:bg-zinc-100"
+                    ? "bg-indigo-600 text-white"
+                    : "border border-slate-300 text-slate-600 hover:bg-slate-100"
                 }`}
               >
                 {DATEI_TYP_LABELS[typ]}
@@ -300,24 +300,24 @@ export default function AuftragDetailPage() {
             disabled={uploading}
             className="block w-full text-sm"
           />
-          {uploading && <p className="mt-2 text-xs text-zinc-500">Lädt hoch…</p>}
+          {uploading && <p className="mt-2 text-xs text-slate-500">Lädt hoch…</p>}
 
           <div className="mt-4 grid gap-2">
             {auftrag.dateien.map((d) => (
               <div
                 key={d.id}
-                className="flex items-center justify-between rounded-lg border border-zinc-100 px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2 text-sm"
               >
                 <div className="min-w-0">
-                  <p className="truncate font-medium text-zinc-900">{d.dateiname}</p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="truncate font-medium text-slate-900">{d.dateiname}</p>
+                  <p className="text-xs text-slate-500">
                     {DATEI_TYP_LABELS[d.typ]} · {formatBytes(d.groesse)} · {d.hochgeladenVon.name}
                   </p>
                 </div>
                 <div className="flex shrink-0 gap-2">
                   <button
                     onClick={() => handleDownload(d.id)}
-                    className="text-xs text-zinc-600 hover:text-zinc-900"
+                    className="text-xs text-slate-600 hover:text-slate-900"
                   >
                     Öffnen
                   </button>
@@ -331,7 +331,7 @@ export default function AuftragDetailPage() {
               </div>
             ))}
             {auftrag.dateien.length === 0 && (
-              <p className="text-sm text-zinc-400">Noch keine Dateien hochgeladen.</p>
+              <p className="text-sm text-slate-400">Noch keine Dateien hochgeladen.</p>
             )}
           </div>
         </div>

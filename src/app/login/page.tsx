@@ -36,40 +36,42 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center px-4">
+    <div className="flex flex-1 items-center justify-center bg-gradient-to-br from-indigo-700 via-indigo-600 to-slate-800 px-4">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm rounded-xl border border-zinc-200 bg-white p-8 shadow-sm"
+        className="w-full max-w-sm rounded-2xl border border-white/10 bg-white p-8 shadow-2xl"
       >
-        <h1 className="mb-1 text-xl font-semibold text-zinc-900">AuftragsApp</h1>
-        <p className="mb-6 text-sm text-zinc-500">Melde dich mit deinem Konto an</p>
+        <h1 className="mb-1 text-2xl font-bold text-indigo-700">🔧 AuftragsApp</h1>
+        <p className="mb-6 text-sm text-slate-500">Melde dich mit deinem Konto an</p>
 
-        <label className="mb-1 block text-sm font-medium text-zinc-700">E-Mail</label>
+        <label className="mb-1 block text-sm font-medium text-slate-700">E-Mail</label>
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="mb-4 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+          className="mb-4 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           placeholder="name@werkstatt.de"
         />
 
-        <label className="mb-1 block text-sm font-medium text-zinc-700">Passwort</label>
+        <label className="mb-1 block text-sm font-medium text-slate-700">Passwort</label>
         <input
           type="password"
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="mb-4 w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm outline-none focus:border-zinc-900"
+          className="mb-4 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           placeholder="••••••••"
         />
 
-        {error && <p className="mb-4 text-sm text-red-600">{error}</p>}
+        {error && (
+          <p className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>
+        )}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+          className="w-full rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 disabled:opacity-50"
         >
           {loading ? "Anmelden…" : "Anmelden"}
         </button>

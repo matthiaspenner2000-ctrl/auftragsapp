@@ -30,22 +30,22 @@ export default function FahrzeugKarteiPage() {
       .then((s) => setIsAdmin(s?.role === "ADMIN"));
   }, [params.id]);
 
-  if (loading) return <p className="text-sm text-zinc-500">Lädt…</p>;
-  if (notFound || !vehicle) return <p className="text-sm text-zinc-500">Fahrzeug nicht gefunden.</p>;
+  if (loading) return <p className="text-sm text-slate-500">Lädt…</p>;
+  if (notFound || !vehicle) return <p className="text-sm text-slate-500">Fahrzeug nicht gefunden.</p>;
 
   return (
     <div>
       <div className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">{vehicle.kennzeichen}</h1>
-          <p className="text-zinc-600">
+          <h1 className="text-2xl font-semibold text-slate-900">{vehicle.kennzeichen}</h1>
+          <p className="text-slate-600">
             {vehicle.marke} {vehicle.modell} {vehicle.baujahr ? `(${vehicle.baujahr})` : ""}
           </p>
         </div>
         {isAdmin && (
           <Link
             href={`/admin/auftraege/neu?vehicleId=${vehicle.id}`}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800"
+            className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"
           >
             + Neuer Auftrag für dieses Fahrzeug
           </Link>
@@ -53,51 +53,51 @@ export default function FahrzeugKarteiPage() {
       </div>
 
       <div className="mb-8 grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-zinc-200 bg-white p-5">
-          <h2 className="mb-3 text-sm font-semibold text-zinc-500">Fahrzeugdaten</h2>
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-500">Fahrzeugdaten</h2>
           <dl className="grid grid-cols-2 gap-y-2 text-sm">
-            <dt className="text-zinc-500">Farbe</dt>
+            <dt className="text-slate-500">Farbe</dt>
             <dd>{vehicle.farbe ?? "–"}</dd>
-            <dt className="text-zinc-500">Kilometerstand</dt>
+            <dt className="text-slate-500">Kilometerstand</dt>
             <dd>{vehicle.kilometerstand ? `${vehicle.kilometerstand.toLocaleString("de-DE")} km` : "–"}</dd>
-            <dt className="text-zinc-500">VIN</dt>
+            <dt className="text-slate-500">VIN</dt>
             <dd>{vehicle.vin ?? "–"}</dd>
           </dl>
         </div>
-        <div className="rounded-xl border border-zinc-200 bg-white p-5">
-          <h2 className="mb-3 text-sm font-semibold text-zinc-500">Kunde</h2>
+        <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-3 text-sm font-semibold text-slate-500">Kunde</h2>
           <dl className="grid grid-cols-2 gap-y-2 text-sm">
-            <dt className="text-zinc-500">Name</dt>
+            <dt className="text-slate-500">Name</dt>
             <dd>{vehicle.kundeName ?? "–"}</dd>
-            <dt className="text-zinc-500">Telefon</dt>
+            <dt className="text-slate-500">Telefon</dt>
             <dd>{vehicle.kundeTelefon ?? "–"}</dd>
-            <dt className="text-zinc-500">E-Mail</dt>
+            <dt className="text-slate-500">E-Mail</dt>
             <dd>{vehicle.kundeEmail ?? "–"}</dd>
           </dl>
         </div>
       </div>
 
       {vehicle.notizen && (
-        <div className="mb-8 rounded-xl border border-zinc-200 bg-white p-5">
-          <h2 className="mb-2 text-sm font-semibold text-zinc-500">Notizen</h2>
-          <p className="text-sm text-zinc-700 whitespace-pre-wrap">{vehicle.notizen}</p>
+        <div className="mb-8 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <h2 className="mb-2 text-sm font-semibold text-slate-500">Notizen</h2>
+          <p className="text-sm text-slate-700 whitespace-pre-wrap">{vehicle.notizen}</p>
         </div>
       )}
 
-      <h2 className="mb-3 text-lg font-semibold text-zinc-900">Auftragshistorie</h2>
+      <h2 className="mb-3 text-lg font-semibold text-slate-900">Auftragshistorie</h2>
       {vehicle.auftraege.length === 0 ? (
-        <p className="text-sm text-zinc-500">Noch keine Aufträge für dieses Fahrzeug.</p>
+        <p className="text-sm text-slate-500">Noch keine Aufträge für dieses Fahrzeug.</p>
       ) : (
         <div className="grid gap-3">
           {vehicle.auftraege.map((a) => (
             <Link
               key={a.id}
               href={`/auftraege/${a.id}`}
-              className="flex items-center justify-between rounded-xl border border-zinc-200 bg-white p-4 hover:border-zinc-400"
+              className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-4 shadow-sm hover:border-indigo-300 hover:shadow-md"
             >
               <div>
-                <p className="font-medium text-zinc-900">{a.titel}</p>
-                <p className="text-sm text-zinc-500">
+                <p className="font-medium text-slate-900">{a.titel}</p>
+                <p className="text-sm text-slate-500">
                   {new Date(a.createdAt).toLocaleDateString("de-DE")} · Zugewiesen an:{" "}
                   {a.zugewiesenAn?.name ?? "Niemand"}
                 </p>

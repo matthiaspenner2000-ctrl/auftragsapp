@@ -83,15 +83,15 @@ function NeuerAuftragForm() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="mb-6 text-2xl font-semibold text-zinc-900">Neuer Auftrag</h1>
-      <form onSubmit={handleSubmit} className="grid gap-4 rounded-xl border border-zinc-200 bg-white p-6">
+      <h1 className="mb-6 text-2xl font-semibold text-slate-900">Neuer Auftrag</h1>
+      <form onSubmit={handleSubmit} className="grid gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-700">Fahrzeug *</label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Fahrzeug *</label>
           <select
             required
             value={vehicleId}
             onChange={(e) => setVehicleId(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           >
             <option value="">– Fahrzeug wählen –</option>
             {vehicles.map((v) => (
@@ -100,24 +100,24 @@ function NeuerAuftragForm() {
               </option>
             ))}
           </select>
-          <p className="mt-1 text-xs text-zinc-400">
+          <p className="mt-1 text-xs text-slate-400">
             Fahrzeug nicht dabei? Erst unter „Fahrzeuge → + Fahrzeug anlegen“ erfassen.
           </p>
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-700">Titel *</label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Titel *</label>
           <input
             required
             value={titel}
             onChange={(e) => setTitel(e.target.value)}
             placeholder="z.B. Bremsen vorne erneuern"
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           />
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-700">
+          <label className="mb-1 block text-sm font-medium text-slate-700">
             Was muss gemacht werden? *
           </label>
           <textarea
@@ -125,17 +125,17 @@ function NeuerAuftragForm() {
             rows={4}
             value={beschreibung}
             onChange={(e) => setBeschreibung(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-700">Zuweisen an</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Zuweisen an</label>
             <select
               value={zugewiesenAnId}
               onChange={(e) => setZugewiesenAnId(e.target.value)}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
             >
               <option value="">– Noch nicht zuweisen –</option>
               {mitarbeiter.map((m) => (
@@ -146,11 +146,11 @@ function NeuerAuftragForm() {
             </select>
           </div>
           <div>
-            <label className="mb-1 block text-sm font-medium text-zinc-700">Priorität</label>
+            <label className="mb-1 block text-sm font-medium text-slate-700">Priorität</label>
             <select
               value={prioritaet}
               onChange={(e) => setPrioritaet(Number(e.target.value))}
-              className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
             >
               <option value={1}>Hoch</option>
               <option value={2}>Normal</option>
@@ -160,31 +160,31 @@ function NeuerAuftragForm() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-700">Fällig am</label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Fällig am</label>
           <input
             type="date"
             value={faelligAm}
             onChange={(e) => setFaelligAm(e.target.value)}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           />
         </div>
 
-        <hr className="my-1 border-zinc-200" />
+        <hr className="my-1 border-slate-200" />
         <div>
           <div className="mb-2 flex items-center justify-between">
-            <label className="block text-sm font-medium text-zinc-700">
+            <label className="block text-sm font-medium text-slate-700">
               Benötigte Ersatzteile & Lagerplatz
             </label>
             <button
               type="button"
               onClick={addErsatzteil}
-              className="text-sm text-zinc-600 hover:text-zinc-900"
+              className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
             >
               + Teil hinzufügen
             </button>
           </div>
           {ersatzteile.length === 0 && (
-            <p className="text-sm text-zinc-400">Noch keine Ersatzteile hinzugefügt.</p>
+            <p className="text-sm text-slate-400">Noch keine Ersatzteile hinzugefügt.</p>
           )}
           <div className="grid gap-2">
             {ersatzteile.map((teil, i) => (
@@ -193,20 +193,20 @@ function NeuerAuftragForm() {
                   placeholder="Bezeichnung"
                   value={teil.bezeichnung}
                   onChange={(e) => updateErsatzteil(i, "bezeichnung", e.target.value)}
-                  className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+                  className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                 />
                 <input
                   placeholder="Lagerplatz (z.B. Regal A3)"
                   value={teil.lagerplatz}
                   onChange={(e) => updateErsatzteil(i, "lagerplatz", e.target.value)}
-                  className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+                  className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                 />
                 <input
                   type="number"
                   min={1}
                   value={teil.menge}
                   onChange={(e) => updateErsatzteil(i, "menge", Number(e.target.value))}
-                  className="rounded-lg border border-zinc-300 px-2 py-1.5 text-sm"
+                  className="rounded-lg border border-slate-300 px-2 py-1.5 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
                 />
                 <button
                   type="button"
@@ -225,7 +225,7 @@ function NeuerAuftragForm() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 w-fit rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+          className="mt-2 w-fit rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
         >
           {submitting ? "Speichern…" : "Auftrag anlegen"}
         </button>

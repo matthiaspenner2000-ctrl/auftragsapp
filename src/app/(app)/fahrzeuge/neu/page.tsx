@@ -63,8 +63,8 @@ export default function NeuesFahrzeugPage() {
 
   return (
     <div className="max-w-2xl">
-      <h1 className="mb-6 text-2xl font-semibold text-zinc-900">Neues Fahrzeug</h1>
-      <form onSubmit={handleSubmit} className="grid gap-4 rounded-xl border border-zinc-200 bg-white p-6">
+      <h1 className="mb-6 text-2xl font-semibold text-slate-900">Neues Fahrzeug</h1>
+      <form onSubmit={handleSubmit} className="grid gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
         <div className="grid grid-cols-2 gap-4">
           <Field label="Kennzeichen *" value={form.kennzeichen} onChange={(v) => update("kennzeichen", v)} required />
           <Field label="Baujahr" value={form.baujahr} onChange={(v) => update("baujahr", v)} type="number" />
@@ -79,8 +79,8 @@ export default function NeuesFahrzeugPage() {
         </div>
         <Field label="Fahrgestellnummer (VIN)" value={form.vin} onChange={(v) => update("vin", v)} />
 
-        <hr className="my-2 border-zinc-200" />
-        <p className="text-sm font-medium text-zinc-700">Kundendaten (optional)</p>
+        <hr className="my-2 border-slate-200" />
+        <p className="text-sm font-medium text-slate-700">Kundendaten (optional)</p>
         <Field label="Kundenname" value={form.kundeName} onChange={(v) => update("kundeName", v)} />
         <div className="grid grid-cols-2 gap-4">
           <Field label="Telefon" value={form.kundeTelefon} onChange={(v) => update("kundeTelefon", v)} />
@@ -88,12 +88,12 @@ export default function NeuesFahrzeugPage() {
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-zinc-700">Notizen</label>
+          <label className="mb-1 block text-sm font-medium text-slate-700">Notizen</label>
           <textarea
             value={form.notizen}
             onChange={(e) => update("notizen", e.target.value)}
             rows={3}
-            className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
           />
         </div>
 
@@ -102,7 +102,7 @@ export default function NeuesFahrzeugPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="mt-2 w-fit rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-50"
+          className="mt-2 w-fit rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
         >
           {submitting ? "Speichern…" : "Fahrzeug anlegen"}
         </button>
@@ -126,13 +126,13 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-medium text-zinc-700">{label}</label>
+      <label className="mb-1 block text-sm font-medium text-slate-700">{label}</label>
       <input
         type={type}
         required={required}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+        className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
       />
     </div>
   );

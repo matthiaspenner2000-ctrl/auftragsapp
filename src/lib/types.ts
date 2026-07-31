@@ -10,10 +10,10 @@ export const STATUS_LABELS: Record<AuftragStatus, string> = {
 };
 
 export const STATUS_COLORS: Record<AuftragStatus, string> = {
-  OFFEN: "bg-zinc-100 text-zinc-700",
-  IN_ARBEIT: "bg-blue-100 text-blue-700",
-  WARTET_AUF_TEILE: "bg-amber-100 text-amber-700",
-  ERLEDIGT: "bg-green-100 text-green-700",
+  OFFEN: "bg-slate-200 text-slate-700",
+  IN_ARBEIT: "bg-sky-100 text-sky-700",
+  WARTET_AUF_TEILE: "bg-amber-100 text-amber-800",
+  ERLEDIGT: "bg-emerald-100 text-emerald-700",
 };
 
 export const PRIORITAET_LABELS: Record<number, string> = {
